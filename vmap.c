@@ -2,17 +2,14 @@
 #include <string.h>
 #include <stdlib.h>
 
-void write_vm(const char* pid, const char* filename) {
+void pmap_to_file(const char* pid, const char* filename) {
     char buffer[256];
     char buffer2[256];
 
-    //Открываем результирующий файл для чтения и записи, если он не читается - значит его нет
     FILE* output = fopen(filename, "r");
     if(!output){
         printf("Такого файла не существует, создаём...\n");
-        //Если его нет, то его нужно создать, следовательно открываем на чтение
-        output = fopen("output.txt", "w");
-        //Если он и сейчас не открылся/создался то проблема глобальнее
+        output = fopen(filename, "w");
         if(!output){
             perror("Ошибка создания файла...");
             return;
@@ -23,7 +20,6 @@ void write_vm(const char* pid, const char* filename) {
         close(output);
         printf("Запись в файл прошла успешно!\n");
     } else {
-        //Здесь рассматриваем случай, что файл с таким именем уже существует:
         printf(
                 "Внимание! Файл %s уже существует, возможные варианты разрешения:\n"
                "\t1.Перезаписать файл\n"
@@ -59,28 +55,19 @@ void write_vm(const char* pid, const char* filename) {
             printf("Программа завершила работу!\n");
             return;
         }
-        //Закрываем файл
         close(output);
     }
 }
 
-void print_vm(const char* pid) {
-    char buffer[256];
-    memset(buffer, 0, 256);
-    snprintf(buffer, 256, "%s %s", "pmap", pid);
-    system(buffer);
-}
 
 int main(int argc, char* argv[]) {
-    if (argc < 2 || argc > 3) {
+    if (argc != 3) {
         printf(
                 "Использовать:\n"
-                "\t./vmap <pid>\n"
                 "\t./vmap <pid> <output_filename>\n"
         );
         return 1;
     }
-    if(argc == 3)write_vm(argv[1], argv[2]);
-    else print_vm(argv[1]);
+    pmap_to_file(argv[1], argv[2]);
     return 0;
 }
