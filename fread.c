@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
     char inp = fgetc(file);
 
 
-    while(inp != EOF && N){
+    while(inp != EOF){
 
         buffer[buffptr++] = inp;
         if(inp == '\n'){
